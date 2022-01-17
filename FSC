@@ -1,0 +1,167 @@
+pragma solidity ^0.4.16;
+
+contract FSC{
+    bool public state;
+    address public owner;
+    address public client;
+    address public salesManager;
+    address public arbiter;	
+    string public organizationName;
+	string public contractName;
+	uint public deposit;
+	uint public salesmanageramount;
+	uint public clientamount;
+	enum FSCStatus {WaitingforIssuer, Aborted}
+	FSCStatus public status;
+	enum clientStatus {IssuerDeposited, OwnerRefunded, WaitingforClientDecision, SuccessfulContractSigning, ContractDispute, Finished, SalesManagerSigned, ClientSigned}
+    Contract[] public contractProperties;    
+	mapping (address => Client) public clients;
+    
+    event StatusChanged(string Status);
+	event OwnerDepositedAndPaid(address OwnerAddress, string info);
+    event RefundBasedOnOwnerRequest(string info, address OwnerAddress);	
+	event ContractAdded(address OwnerAddress, string ContractName, string ContractProperties);    
+    event ASuccessfulContractSigning(address ClientAddress, string info); 
+	event ContractControversy(address ClientAddress, string info);
+	event ArbiterIsVerifyingforClient(address ClientAddress, address OwnerAddress, address SalesManagerAddress, string info);
+	event ContractFraud(address OwnerAddress, address ClientAddress, address SalesManagerAddress, string info);
+	event CompensationDone(address ClientAddress, string info);	
+	event ClientPunished(address CustomerAddress, string info);
+	event ContractSignedBySalesManager(string info, bytes32 Signature);
+	event ContractSignedByClient(string info, bytes32 Signature);
+
+    struct Contract {
+        address owner;
+	    string conName;
+		string conProperties;        
+	    uint contractSince;
+    }
+    
+    struct Client {
+	    clientStatus status;
+	}	
+  
+    modifier onlyOwner {
+        require (msg.sender == owner);
+	    _;
+    }
+	
+	modifier onlyClient {
+	    require (msg.sender == client);
+		_;
+	}
+	
+	modifier onlySalesManager {
+	    require (msg.sender == salesManager);
+		_;
+	}
+	
+	modifier onlyArbiter {
+	    require (msg.sender == arbiter);
+		_;
+	}
+	
+	modifier ownerCost {
+	    require (msg.value == deposit);
+		_;
+	}
+	
+	modifier salesManagerCost {
+	    require (msg.value == salesmanageramount);
+		_;
+	}
+	
+	modifier clientCost {
+	    require (msg.value == clientamount);
+		_;
+	}
+
+    function FSC(string enterOrganizationName, string enterContractName) public {
+        owner = 0xD14EccFd8251f9dEAa78c1c09f399235E4bc472e;
+		salesManager = 0x236DA1E0726522B76d5F3C1A3B4Ed40E59afD9DD;
+		client = 0xbDc1eA1b68Cff0718F159eA1268CB41188a9fa60;
+		arbiter = 0xc9Adba823dF6A34b9F2C7591b0699a4aF7611BC1;
+	    state = true;
+	    organizationName = enterOrganizationName;
+        contractName = enterContractName;      	
+	    AddContract(0,"","");	    
+        deposit = 9 ether;
+        salesmanageramount = 10 ether;
+        clientamount = 90 ether;		
+    }
+	
+    function ChangeStatus(bool deactivate) onlyOwner public {
+        if (deactivate)
+	    {state = false;}
+	    StatusChanged("Smart Contract Deactivated");
+    }
+	
+	function ContractPublishDeposit() onlyOwner ownerCost public payable {
+        require(status == FSCStatus.WaitingforIssuer);
+        clients[msg.sender].status = clientStatus.IssuerDeposited;
+        OwnerDepositedAndPaid(msg.sender, "Issuer deposited");    
+    }
+	
+    function ownerRefund() onlyOwner public payable {
+        require(clients[msg.sender].status == clientStatus.IssuerDeposited);
+        uint x = deposit;
+        msg.sender.transfer(x);
+        clients[msg.sender].status = clientStatus.OwnerRefunded;
+        RefundBasedOnOwnerRequest("Issuer has been refunded", msg.sender);
+    }
+	
+    function AddContract(address owneraddress, string contractname, string properties) onlyOwner public {
+        require(clients[owneraddress].status == clientStatus.IssuerDeposited);
+	    uint id = contractProperties.length++;
+        contractProperties[id] = Contract({owner: owneraddress, conName: contractname, conProperties: properties, contractSince: now});
+	    ContractAdded(owneraddress, contractname, properties);
+        clients[owneraddress].status = clientStatus.WaitingforClientDecision;         
+    }	  		
+	
+    function ContractConfirmed(address ownerAddress, address salesManagerAddress, int result) onlyClient public {
+        require(clients[ownerAddress].status == clientStatus.WaitingforClientDecision);
+        if(result == 1)//1 means the contract signing is successful. 
+        {
+          ASuccessfulContractSigning(msg.sender, "The contract signing is successful.");
+          clients[ownerAddress].status = clientStatus.SuccessfulContractSigning;          
+        }
+        else if(result == 2){//2 means the contract has a fraud dispute.
+          ContractControversy(msg.sender, "This contract has a fraudulent dispute.");
+          clients[ownerAddress].status = clientStatus.ContractDispute;
+          ArbiterIsVerifyingforClient(msg.sender, ownerAddress, salesManagerAddress, "The arbiter intervenes in the dispute arbitration.");
+        }        
+    }
+	
+	function DisputeArbitration(address ownerAddress, address clientAddress, address salesManagerAddress, bool rulingResult) onlyArbiter public payable {
+        require(clients[ownerAddress].status == clientStatus.ContractDispute);		
+        if(rulingResult){//contract fraud
+           ContractFraud(ownerAddress, clientAddress, salesManagerAddress, "The contract is fraudulent.");
+		   Penalty(clientAddress, ownerAddress);
+        }
+        else{//contract fraud-free
+          ASuccessfulContractSigning(clientAddress, "The contract signing is successful.");
+		  clients[ownerAddress].status = clientStatus.SuccessfulContractSigning;
+          ClientPunished(clientAddress, "The client will be punished.");            
+        }
+    }
+    
+	function SignedBySalesManager(address salesManagerAddress, address clientAddress, address fscAddress, uint salesManagerAmount) onlySalesManager salesManagerCost public payable {
+	    bytes32 signature = keccak256(salesManagerAddress, clientAddress, fscAddress, salesManagerAmount);
+		ContractSignedBySalesManager("The sales manager has signed the financial investment contract.", signature);
+		clients[clientAddress].status = clientStatus.SalesManagerSigned;		
+	}
+	
+	function SignedByClient(address clientAddress, address salesManagerAddress, address fscAddress, uint clientAmount) onlyClient clientCost public payable {
+	    require(clients[client].status == clientStatus.SalesManagerSigned);
+		bytes32 signature = keccak256(clientAddress, salesManagerAddress, fscAddress, clientAmount);
+		ContractSignedByClient("The client has signed the financial investment contract.", signature);
+		clients[client].status = clientStatus.ClientSigned;
+	}
+	
+	function Penalty(address clientAddress, address ownerAddress) internal{//the smart contract internal call
+        uint x = deposit;
+        clientAddress.transfer(x);//compensate to the client         
+		CompensationDone(clientAddress, "The client has been compensated.");
+        clients[ownerAddress].status = clientStatus.Finished;
+    }
+}
