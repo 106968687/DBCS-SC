@@ -1,0 +1,148 @@
+pragma solidity ^0.4.16;
+
+contract DSC {
+    bool public state;
+    address public owner;
+    address public salesManager;
+    address public client;
+    address public arbiter;
+    string public organizationName;
+    string public contractName;       
+    uint public numberOfSalesManagers;
+    mapping (address => uint) public salesManagerId;
+    SalesManager[] public salesManagers;
+	uint public deposit;
+	enum DSCStatus {WaitingforSalesManager, Terminated}
+	DSCStatus public status;	
+	enum clientStatus {salesManagerDeposited, waitingforClient, salesManagerRefunded, clientDeposited, finished}
+	mapping (address => Client) public clients;
+       
+    event StatusChanged(string Status);	
+	event SalesManagerAdded (address SalesManagerAddress, string SalesManagerDelegate, string SalesManagerNote);
+    event SalesManagerRemoved(address SalesManagerAddress);
+	event SalesManagerDepositedAndPaid(address SalesManagerAddress, string info);
+	event ClientDepositedAndPaid(address ClientAddress, string info);
+    event RefundBasedOnSalesManagerRequest(string info, address SalesManagerAddress);
+	event ClientRefunded(address ClientAddress, string info);
+	event ClientFined(address ClientAddress, string info);
+    
+    struct SalesManager {
+        address salesManageraddress;
+	    string contractname;
+	    string contractnote;
+	    uint salesManagerSince;
+    }
+	
+	struct Client {
+	    clientStatus status;
+	}
+    
+	modifier onlyOwner {
+        require (msg.sender == owner);
+	    _;
+    }
+	
+	modifier onlySalesManager {
+	    require (msg.sender == salesManager);
+		_;
+	}
+	
+	modifier onlyClient {
+	    require (msg.sender == client);
+		_;
+	}
+	
+	modifier onlyArbiter {
+	    require (msg.sender == arbiter);
+		_;
+	}
+	
+	modifier salesManagerCost() {
+	    require (msg.value == deposit);
+		_;
+	}
+	
+	modifier clientCost() {
+	    require (msg.value == deposit);
+		_;
+	}
+
+    function DSC(string enterOrganizationName, string enterContractName) public {
+        owner = 0xD14EccFd8251f9dEAa78c1c09f399235E4bc472e;
+		salesManager = 0x236DA1E0726522B76d5F3C1A3B4Ed40E59afD9DD;
+		client = 0xbDc1eA1b68Cff0718F159eA1268CB41188a9fa60;
+		arbiter = 0xc9Adba823dF6A34b9F2C7591b0699a4aF7611BC1;
+		state = true;	    
+	    AddSalesManager(0,"","");
+		organizationName = enterOrganizationName;
+	    contractName = enterContractName;
+        numberOfSalesManagers = 0;
+        deposit = 3 ether;		
+    }
+	
+    function ChangeStatus(bool deactivate) onlyOwner public {
+        if (deactivate)
+	    {state = false;}
+	    StatusChanged("Smart Contract Deactivated");
+    }
+	
+	function RequestDelegate() onlySalesManager salesManagerCost public payable {
+        require(status == DSCStatus.WaitingforSalesManager);
+        clients[msg.sender].status = clientStatus.salesManagerDeposited;
+        SalesManagerDepositedAndPaid(msg.sender, "SalesManager deposited");    
+    }
+	
+    function SalesManagerRefund() onlySalesManager public payable {
+        require(clients[msg.sender].status == clientStatus.salesManagerDeposited);
+        uint x = deposit;
+        msg.sender.transfer(x);
+        clients[msg.sender].status = clientStatus.salesManagerRefunded;
+        RefundBasedOnSalesManagerRequest("SalesManager has been refunded", msg.sender);
+    }
+		
+    function AddSalesManager(address salesManagerAddress, string salesManagerDelegate, string salesManagerNote) onlyOwner public {
+        require(clients[salesManagerAddress].status == clientStatus.salesManagerDeposited);
+	    uint id = salesManagerId[salesManagerAddress];
+	    if(id == 0) {
+	    salesManagerId[salesManagerAddress] = salesManagers.length;
+	    id = salesManagers.length++;
+	}
+	    salesManagers[id] = SalesManager({salesManageraddress: salesManagerAddress, contractname: salesManagerDelegate, contractnote: salesManagerNote, salesManagerSince: now});
+        SalesManagerAdded(salesManagerAddress, salesManagerDelegate, salesManagerNote);
+	    numberOfSalesManagers++;
+		clients[salesManagerAddress].status = clientStatus.waitingforClient;
+    }
+	
+    function RemoveSalesManager(address salesManagerAddress) onlyOwner public {
+        require(salesManagerId[salesManagerAddress] != 0);
+	    for(uint i = salesManagerId[salesManagerAddress]; i < salesManagers.length-1; i++){
+	    salesManagers[i] = salesManagers[i+1];
+	}
+	    delete salesManagers[salesManagers.length-1];
+	    salesManagers.length--;
+	    SalesManagerRemoved(salesManagerAddress);
+	    numberOfSalesManagers--;
+    }
+	
+	function RequestSigning(address salesManagerAddress) onlyClient clientCost public payable {
+        require(clients[salesManagerAddress].status == clientStatus.waitingforClient);
+        clients[salesManagerAddress].status = clientStatus.clientDeposited;
+        ClientDepositedAndPaid(msg.sender, "Client deposited");		
+    }
+	
+	function ClientRefund(address clientAddress, address salesManagerAddress, int result) onlyArbiter public payable {
+        require(result == 1);//1 means the client will be refunded. 	
+        uint x = deposit;        
+        clientAddress.transfer(x);		
+        ClientRefunded(clientAddress, "The client has been refunded.");
+        clients[salesManagerAddress].status = clientStatus.finished;
+    }
+	
+	function Settlement(address clientAddress, address salesManagerAddress, int result) onlyArbiter public payable {
+        require(result == 2);//2 means the client will be fined. 	
+        uint x = deposit;        
+        owner.transfer(x);		
+        ClientFined(clientAddress, "The client has been fined.");
+        clients[salesManagerAddress].status = clientStatus.finished;
+    }	
+}
