@@ -1,0 +1,599 @@
+[
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "client",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "status",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "clientamount",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "ownerAddress",
+				"type": "address"
+			},
+			{
+				"name": "clientAddress",
+				"type": "address"
+			},
+			{
+				"name": "salesManagerAddress",
+				"type": "address"
+			},
+			{
+				"name": "rulingResult",
+				"type": "bool"
+			}
+		],
+		"name": "DisputeArbitration",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "clients",
+		"outputs": [
+			{
+				"name": "status",
+				"type": "uint8"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "organizationName",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "contractName",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "owneraddress",
+				"type": "address"
+			},
+			{
+				"name": "contractname",
+				"type": "string"
+			},
+			{
+				"name": "properties",
+				"type": "string"
+			}
+		],
+		"name": "AddContract",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "salesManager",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "ownerRefund",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "clientAddress",
+				"type": "address"
+			},
+			{
+				"name": "salesManagerAddress",
+				"type": "address"
+			},
+			{
+				"name": "fscAddress",
+				"type": "address"
+			},
+			{
+				"name": "clientAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "SignedByClient",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "state",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "salesManagerAddress",
+				"type": "address"
+			},
+			{
+				"name": "clientAddress",
+				"type": "address"
+			},
+			{
+				"name": "fscAddress",
+				"type": "address"
+			},
+			{
+				"name": "salesManagerAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "SignedBySalesManager",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "ownerAddress",
+				"type": "address"
+			},
+			{
+				"name": "salesManagerAddress",
+				"type": "address"
+			},
+			{
+				"name": "result",
+				"type": "int256"
+			}
+		],
+		"name": "ContractConfirmed",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "deposit",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "ContractPublishDeposit",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "deactivate",
+				"type": "bool"
+			}
+		],
+		"name": "ChangeStatus",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "salesmanageramount",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "contractProperties",
+		"outputs": [
+			{
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"name": "conName",
+				"type": "string"
+			},
+			{
+				"name": "conProperties",
+				"type": "string"
+			},
+			{
+				"name": "contractSince",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "arbiter",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"name": "enterOrganizationName",
+				"type": "string"
+			},
+			{
+				"name": "enterContractName",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "Status",
+				"type": "string"
+			}
+		],
+		"name": "StatusChanged",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "OwnerAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "info",
+				"type": "string"
+			}
+		],
+		"name": "OwnerDepositedAndPaid",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "info",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"name": "OwnerAddress",
+				"type": "address"
+			}
+		],
+		"name": "RefundBasedOnOwnerRequest",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "OwnerAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "ContractName",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"name": "ContractProperties",
+				"type": "string"
+			}
+		],
+		"name": "ContractAdded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "ClientAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "info",
+				"type": "string"
+			}
+		],
+		"name": "ASuccessfulContractSigning",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "ClientAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "info",
+				"type": "string"
+			}
+		],
+		"name": "ContractControversy",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "ClientAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "OwnerAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "SalesManagerAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "info",
+				"type": "string"
+			}
+		],
+		"name": "ArbiterIsVerifyingforClient",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "OwnerAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "ClientAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "SalesManagerAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "info",
+				"type": "string"
+			}
+		],
+		"name": "ContractFraud",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "ClientAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "info",
+				"type": "string"
+			}
+		],
+		"name": "CompensationDone",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "CustomerAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "info",
+				"type": "string"
+			}
+		],
+		"name": "ClientPunished",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "info",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"name": "Signature",
+				"type": "bytes32"
+			}
+		],
+		"name": "ContractSignedBySalesManager",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "info",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"name": "Signature",
+				"type": "bytes32"
+			}
+		],
+		"name": "ContractSignedByClient",
+		"type": "event"
+	}
+]
